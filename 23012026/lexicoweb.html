@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Analizador Léxico</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea { width: 100%; height: 100px; }
+    button { margin-top: 10px; padding: 8px 12px; }
+    .resultado { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Analizador Léxico </h1>
+  <h12>hecho por: José Esteban Pérez González</h2>
+  <p>Escribe tu código aquí:</p>
+  <textarea id="input"> </textarea>
+  <br> 
+  <button onclick="analizar()">Analizar</button>
+
+  <div class="resultado" id="resultado"></div>
+
+<script>
+  function Lex(input) {
+    const tokens = [];
+    let i = 0;
+
+    while (i < input.length) {
+      let char = input[i];
+
+      // Ignorar espacios
+      if (/\s/.test(char)) {
+        i++;
+        continue;
+      }
+
+      // Identificadores / Variables
+      if (/[a-zA-Z]/.test(char)) {
+        let value = "";
+        while (/[a-zA-Z]/.test(input[i])) {
+          value += input[i];
+          i++;
+        }
+
+        let tipo = "";
+        if (/^[a-z]$/.test(value)) {
+          tipo = "variable";
+        } else {
+          tipo = "identificador";
+        }
+
+        tokens.push({ token: value, lexema: tipo });
+        continue;
+      }
+
+      // Números
+      if (/[0-9]/.test(char)) {
+        let value = "";
+        while (/[0-9]/.test(input[i])) {
+          value += input[i];
+          i++;
+        }
+
+        tokens.push({ token: value, lexema: "numero" });
+        continue;
+      }
+
+      // Operaciones
+      if (/[+\-*/]/.test(char)) {
+        tokens.push({ token: char, lexema: "operacion" });
+        i++;
+        continue;
+      }
+
+      // Igual
+      if (char === "=") {
+        tokens.push({ token: "=", lexema: "igual" });
+        i++;
+        continue;
+      }
+
+      // Símbolos
+      if (char === ";") {
+        tokens.push({ token: ";", lexema: "simbolo" });
+        i++;
+        continue;
+      }
+
+      i++;
+    }
+
+    return tokens;
+  }
+
+  function analizar() {
+    const input = document.getElementById("input").value;
+    const tokens = Lex(input);
+
+    let html = `
+      <h2>Resultado del Analizador Léxico</h2>
+      <table border="1" cellpadding="5">
+        <tr>
+          <th>Token</th>
+          <th>Lexema</th>
+        </tr>
+    `;
+
+    tokens.forEach(t => {
+      html += `
+        <tr>
+          <td>${t.token}</td>
+          <td>${t.lexema}</td>
+        </tr>
+      `;
+    });
+
+    html += "</table>";
+    document.getElementById("resultado").innerHTML = html;
+  }
+</script>
+
+</body>
+</html>
